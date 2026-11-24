@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مغامرة في عالم التضاريس</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--card:#fffdf6;--ink:#1d3b2a;--g:#1f6b3f;--b:#2a9df4;--br:#8a5a2b;--au:#f2b705;--bad:#d64545;--ok:#2e9e5b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--card:#1a2e23;--ink:#eaf5ee}}
+:root[data-theme="dark"]{--card:#1a2e23;--ink:#eaf5ee}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;font-family:Cairo,Tahoma,sans-serif;color:var(--ink);min-height:100vh;background:linear-gradient(#aee3ff,#d8f3c2);transition:background .6s}
+.w{max-width:760px;margin:0 auto;padding:12px}
+.card{background:var(--card);border-radius:22px;padding:16px;box-shadow:0 6px 20px #0003;margin-bottom:12px}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+h1{margin:6px 0;font-size:clamp(26px,6vw,40px);font-weight:900;color:var(--g);text-align:center}
+.c{text-align:center}
+.btn{font:inherit;font-weight:700;border:0;border-radius:14px;padding:12px 18px;background:var(--g);color:#fff;cursor:pointer;margin:4px;box-shadow:0 4px 0 #0004}
+.btn:active{transform:translateY(3px);box-shadow:none}
+.btn.b{background:var(--b)}.btn.a{background:var(--au);color:#2b2100}.btn.s{padding:6px 12px;font-size:14px}
+:focus-visible{outline:3px solid var(--au);outline-offset:2px}
+input{font:inherit;font-size:18px;width:100%;padding:12px;border-radius:14px;border:3px solid var(--br);background:var(--card);color:var(--ink);text-align:center;margin:10px 0}
+.o{display:block;width:100%;font:inherit;font-size:18px;text-align:start;padding:12px 14px;margin:8px 0;border-radius:14px;border:2px solid var(--br);background:var(--card);color:var(--ink);cursor:pointer}
+.o.ok{background:var(--ok);color:#fff}.o.bad{background:var(--bad);color:#fff;animation:sh .4s}
+@keyframes sh{25%{transform:translateX(8px)}75%{transform:translateX(-8px)}}
+@keyframes fl{50%{transform:translateY(-10px)}}
+@keyframes fa{to{transform:translateY(105vh) rotate(360deg)}}
+.sc{font-size:54px;text-align:center;animation:fl 3s ease-in-out infinite}
+.pb{height:12px;background:#0002;border-radius:9px;position:relative;margin:18px 0 8px}
+.pb i{display:block;height:100%;background:var(--au);border-radius:9px;transition:.4s}
+.ex{position:absolute;top:-16px;font-size:26px;transition:.4s}
+.tm{height:6px;background:#0002;border-radius:4px;margin-bottom:8px}.tm i{display:block;height:100%;width:100%;background:var(--bad)}
+.q{font-size:21px;font-weight:700;margin:10px 0}
+.bk{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+.it{background:var(--au);color:#2b2100;border-radius:16px;padding:16px;font-weight:700;font-size:19px;text-align:center;cursor:grab;margin:10px 0}
+.map{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.nd{border:3px solid var(--br);border-radius:18px;padding:10px;text-align:center;background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.nd.lk{filter:grayscale(1);opacity:.55;cursor:not-allowed}
+.nd b{display:block}.nd .e{font-size:36px}
+.rw{display:flex;align-items:center;gap:8px;padding:8px;border-radius:12px;margin:5px 0;background:#0000000d}
+.rw.t1{background:#f2b70555}.rw.t2{background:#c0c0c066}.rw.t3{background:#cd7f3266}.rw.me{outline:3px solid var(--b)}
+.rw span:nth-child(2){flex:1;font-weight:700}
+.cf{position:fixed;top:-40px;font-size:26px;animation:fa 3s linear forwards;pointer-events:none;z-index:9}
+#cert{border:8px double var(--au);text-align:center;padding:24px}
+#cert h2{font-size:34px;color:var(--g);margin:6px}
+@media print{body{background:#fff}body *{visibility:hidden}#cert,#cert *{visibility:visible}#cert{position:absolute;inset:0;color:#000;background:#fff}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body><div class="w" id="app"></div>
+<script>
+const $=s=>document.querySelector(s),esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),shuf=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+const ld=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}};
+const sv=()=>{try{localStorage.setItem('tdr_p',JSON.stringify(P));localStorage.setItem('tdr_me',me)}catch(e){}};
+let P=ld('tdr_p',{}),me='',cur,T,mute=false,AC;
+function snd(f,d=.15,t='sine'){if(mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.value=f;g.gain.value=.07;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+const good=()=>[523,659,784].forEach((f,i)=>setTimeout(()=>snd(f),i*110)),bad=()=>snd(170,.3,'sawtooth');
+const Q=(q,o,a)=>({t:'m',q,o,a}),F=(q,a)=>({t:'f',q,a}),S=(h,b,i)=>({t:'s',h,b,i});
+const E=[
+[Q('ما المقصود بالتضاريس؟',['الكائنات الحية','أشكال سطح الأرض','المناخ','التربة'],1),Q('من أمثلة التضاريس:',['الهواء','الماء','الجبال','الشمس'],2),Q('التضاريس تشمل:',['النباتات فقط','الجبال والهضاب','الحيوانات فقط','الإنسان'],1),Q('تختلف التضاريس من حيث:',['اللون فقط','الارتفاع والانخفاض','الشكل فقط','الحجم فقط'],1),Q('نرى التضاريس في:',['السماء','سطح الأرض','البحر فقط','الشمس'],1)],
+[Q('كم عدد أنواع التضاريس الرئيسية؟',['نوع واحد','نوعان','أربعة أنواع','خمسة أنواع'],2),Q('أي مما يلي من أنواع التضاريس؟',['الجبال','السحب','المطر','الرياح'],0),Q('من أنواع التضاريس:',['الهضاب','الهواء','الضوء','الصوت'],0),Q('تشمل التضاريس:',['الجبال والهضاب والسهول والوديان','الشمس والقمر','الماء والهواء','النبات والحيوان'],0),Q('تختلف أنواع التضاريس في:',['الوظيفة فقط','الشكل والارتفاع','اللون فقط','الحجم فقط'],1)],
+[Q('الجبال هي:',['أراضٍ منخفضة','أراضٍ مرتفعة','أراضٍ مائية','أراضٍ مسطحة'],1),Q('تتميز الجبال بـ:',['سطح مستوٍ','قمم عالية','مياه كثيرة','تربة فقط'],1),Q('الجبال لها:',['قمم وسفوح','أنهار فقط','بحار','سحب'],0),Q('ارتفاع الجبال يكون:',['قليل','متوسط','كبير','لا يوجد'],2),Q('الجبال من التضاريس:',['المنخفضة','المرتفعة','المائية','السطحية'],1)],
+[Q('الهضاب هي:',['منخفضة','مرتفعة نسبيًا','مائية','صغيرة'],1),Q('سطح الهضاب يكون:',['مستوٍ','حاد','مائي','متحرك'],0),Q('الهضاب أقل ارتفاعًا من:',['السهول','الجبال','الوديان','البحار'],1),Q('من خصائص الهضاب:',['قمم حادة','سطح مستوٍ','مياه كثيرة','رمال فقط'],1),Q('الهضاب من التضاريس:',['المنخفضة','المرتفعة','المائية','المتحركة'],1)],
+[Q('السهول هي:',['مرتفعة','منخفضة ومستوية','مائية','صخرية'],1),Q('السهول مناسبة لـ:',['الطيران','الزراعة','السباحة','الغوص'],1),Q('الوديان تقع:',['فوق الجبال','بين الجبال','في السماء','في البحر'],1),Q('الوديان تكون:',['مرتفعة','منخفضة','مائية فقط','صخرية فقط'],1),Q('السهول تتميز بـ:',['الانحدار الشديد','الاستواء','الارتفاع الكبير','المياه'],1)],
+[Q('تؤثر التضاريس في:',['الطعام فقط','الأنشطة البشرية','النوم','اللعب فقط'],1),Q('تساعد التضاريس في:',['تحديد المناخ','اللعب','النوم','الأكل'],0),Q('الزراعة تتم غالبًا في:',['الجبال','السهول','البحار','الوديان فقط'],1),Q('تؤثر التضاريس على:',['النقل','التعليم فقط','النوم','الطعام فقط'],0),Q('أهمية التضاريس أنها:',['بلا فائدة','تؤثر في حياة الإنسان','للزينة فقط','للعب فقط'],1)]];
+const LV=[
+{n:'بوابة عالم التضاريس',e:'🌄',sky:'#aee3ff,#d8f3c2',md:['مفتاح البوابة','🗝️'],msg:'فتحت البوابة! الأرض أمامك مليئة بالأسرار.',s:[F('التضاريس هي أشكال سطح الأرض المختلفة',1),F('نرى التضاريس في السماء',0),...E[0]]},
+{n:'مملكة أنواع التضاريس',e:'🏰',sky:'#ffe9a8,#f4c98a',md:['حارس المملكة','👑'],msg:'عرفت الأنواع الأربعة، أنت مستكشف ماهر!',s:[S('صنّف الوصف إلى نوع التضاريس المناسب',['جبال','هضاب','سهول','وديان'],[['أرض مرتفعة ذات قمم عالية وسفوح شديدة الانحدار',0],['أرض مرتفعة سطحها مستوٍ أو شبه مستوٍ',1],['أرض منخفضة ومستوية',2],['منطقة منخفضة تقع بين الجبال أو الهضاب',3]]),...E[1]]},
+{n:'تحدي تسلق الجبال',e:'🏔️',sky:'#c9d8ff,#e8eef7',md:['مستكشف الجبال','⛰️'],tm:1,msg:'وصلت القمة! أنت أسرع متسلق في الرحلة.',s:[F('للجبال قمم عالية وسفوح شديدة الانحدار',1),F('الجبال أراضٍ منخفضة ومستوية',0),...E[2]]},
+{n:'سر الهضاب',e:'🏜️',sky:'#ffd9a0,#f6b77a',md:['كاشف الهضاب','🧭'],msg:'كشفت سر الهضاب وميّزتها عن الجبال!',s:[F('الهضاب أكثر ارتفاعًا من الجبال',0),S('جبل أم هضبة؟',['جبل','هضبة'],[['قمم عالية وسفوح شديدة الانحدار',0],['سطح مستوٍ أو شبه مستوٍ',1],['أقل ارتفاعًا من الجبال',1],['ارتفاعه كبير مقارنة بما يحيط به',0]]),...E[3]]},
+{n:'وادي الأسرار وأرض السهول',e:'🌾',sky:'#b5ecc0,#e5f7a8',md:['خبير السهول والوديان','🌾'],msg:'عبرت الوادي وزرعت السهل. عمل رائع!',s:[F('الوديان مناطق مرتفعة فوق الجبال',0),S('سهل أم وادٍ؟',['سهل','وادٍ'],[['أرض منخفضة ومستوية مناسبة للزراعة',0],['منطقة منخفضة بين الجبال',1],['قد تمر به المياه في بعض الأحيان',1],['مناسب للسكن',0]]),...E[4]]},
+{n:'تحدي إنقاذ عالم الإنسان',e:'🏘️',sky:'#ffc9d6,#c9e4ff',md:['خبير التضاريس','🌍'],msg:'ساعدت السكان على اختيار أماكنهم. أنت بطل حقيقي!',s:[S('ما التضاريس الأنسب لكل نشاط؟',['سهول','هضاب'],[['الزراعة',0],['السكن',0],['الرعي',1]]),F('تؤثر التضاريس في المناخ وتوزيع الموارد الطبيعية',1),...E[5]]}];
+const FIN={n:'الاختبار النهائي الشامل',e:'🏆',sky:'#ffe38a,#ffb86b',md:['بطل عالم التضاريس','🏅'],tm:1,msg:'أنت بطل عالم التضاريس!'};
+const lv=n=>n==7?FIN:LV[n-1];
+const done=n=>P[me]?.lv[n]?.st>0, un=n=>n==1||(n<7?done(n-1):[1,2,3,4,5,6].every(done));
+const bg=s=>document.body.style.background=`linear-gradient(${s})`;
+const R=h=>{$('#app').innerHTML=h;scrollTo(0,0)};
+const tot=()=>Object.values(P[me]?.lv||{}).reduce((a,x)=>a+x.pts,0);
+function home(){clearInterval(T);bg('#aee3ff,#d8f3c2');if(!me)me=ld('tdr_me','')||'';
+R(`<div class=card><svg viewBox="0 0 400 150" style="width:100%"><rect width="400" height="150" fill="#8fd3ff" rx="14"/><circle cx="330" cy="35" r="20" fill="#f2b705"/><polygon points="0,150 90,30 180,150" fill="#5a8f5a"/><polygon points="70,150 190,50 310,150" fill="#8a5a2b"/><polygon points="190,50 170,75 190,70 205,78" fill="#fff"/><polygon points="240,150 320,70 400,150" fill="#1f6b3f"/><path d="M0 150 Q120 120 200 150 T400 140 V150Z" fill="#2a9df4"/><rect x="0" y="138" width="400" height="12" fill="#6fbf73"/></svg>
+<div class=sc>🧗</div><h1>مغامرة في عالم التضاريس</h1><p class=c>Landforms Adventure — اكتشف أسرار سطح الأرض عبر ستة عوالم!</p>
+<input id=nm maxlength=16 placeholder="اكتب اسمك أيها المستكشف" value="${esc(me)}"><div class=c><button class=btn onclick=go()>🚀 ابدأ المغامرة</button><button class="btn b" onclick=how()>📜 تعليمات اللعبة</button><button class="btn a" onclick=lb()>🏅 لوحة المتصدرين</button></div></div>`)}
+function go(){const v=$('#nm').value.trim();if(!v){$('#nm').style.borderColor='#d64545';$('#nm').placeholder='اكتب اسمك أولًا';return}me=v;P[me]=P[me]||{lv:{}};sv();snd(660);map()}
+function how(){R(`<div class=card><h1>📜 تعليمات اللعبة</h1><p>١. اكتب اسمك وابدأ الرحلة عبر ستة عوالم.<br>٢. أجب عن الأسئلة وصنّف الأوصاف: اضغط على الوصف ثم على الخانة الصحيحة، أو اسحبه إليها.<br>٣. في تحدي تسلق الجبال والاختبار النهائي لديك ٢٠ ثانية لكل سؤال.<br>٤. كل إجابة صحيحة ١٠ نقاط، وتحصل في نهاية كل عالم على نجوم وميدالية.<br>٥. تحتاج ٥٠٪ على الأقل لفتح العالم التالي.<br>٦. أكمل العوالم الستة لتفتح الاختبار النهائي وشهادة بطل التضاريس.</p><div class=c><button class=btn onclick=home()>رجوع</button></div></div>`)}
+function map(){clearInterval(T);bg('#aee3ff,#d8f3c2');const L=P[me].lv;let h=`<div class=card><div class=hd><b>🧗 ${esc(me)}</b><b>⭐ ${tot()} نقطة</b><span><button class="btn s b" onclick=lb()>🏅</button><button class="btn s" onclick="mute=!mute;this.textContent=mute?'🔇':'🔊'">${mute?'🔇':'🔊'}</button><button class="btn s a" onclick=home()>🏠</button></span></div><h1>خريطة المغامرة</h1><div class=map>`;
+for(let n=1;n<=7;n++){const l=lv(n),o=L[n],u=un(n);h+=`<button class="nd ${u?'':'lk'}" ${u?`onclick=start(${n})`:'disabled'}><span class=e>${u?l.e:'🔒'}</span><b>${n==7?'الاختبار النهائي':'المستوى '+n}</b>${l.n}<br>${o?'★'.repeat(o.st)+'☆'.repeat(3-o.st):'☆☆☆'}</button>`}
+R(h+'</div></div>')}
+function start(n){const l=lv(n);cur={n,i:0,c:0,w:0,q:n==7?shuf(E.flat()).slice(0,10):l.s.flatMap(s=>s.t=='s'?s.i.map(x=>({t:'s',h:s.h,b:s.b,x:x[0],a:x[1]})):[s])};bg(l.sky);step()}
+function step(){clearInterval(T);const c=cur,q=c.q[c.i],l=lv(c.n);if(!q)return result();c.lock=0;const p=c.i/c.q.length*100;
+let h=`<div class=card><div class=hd><b>${l.e} ${l.n}</b><b>⭐ ${c.c*10}</b></div><div class=pb><i style="width:${p}%"></i><span class=ex style="inset-inline-start:calc(${p}% - 14px)">🧗</span></div>${l.tm&&q.t!='s'?'<div class=tm><i id=tb></i></div>':''}`;
+if(q.t=='m')h+=`<div class=q>${q.q}</div>`+shuf([0,1,2,3]).map(i=>`<button class=o ${i==q.a?'data-k=1':''} onclick="ans(this,${i==q.a})">${q.o[i]}</button>`).join('');
+if(q.t=='f')h+=`<div class=q>صح أم خطأ؟<br>${q.q}</div><button class=o data-k=${q.a?1:''} onclick="ans(this,${!!q.a})">✅ صح</button><button class=o ${q.a?'':'data-k=1'} onclick="ans(this,${!q.a})">❌ خطأ</button>`;
+if(q.t=='s')h+=`<div class=q>${q.h}</div><div class=it draggable=true>${q.x}</div><div class=bk>`+q.b.map((b,j)=>`<button class=o style="text-align:center;font-weight:700" onclick="ans(this,${j==q.a})" ondragover="event.preventDefault()" ondrop="ans(this,${j==q.a})">${b}</button>`).join('')+'</div>';
+R(h+'</div>');
+if(l.tm&&q.t!='s'){let t=200;T=setInterval(()=>{t--;const b=$('#tb');if(b)b.style.width=t/2+'%';if(t<=0)ans(null,false)},100)}}
+function ans(el,ok){const c=cur,q=c.q[c.i];if(c.lock)return;
+if(q.t=='s'&&!ok){c.w++;bad();el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),450);return}
+c.lock=1;clearInterval(T);if(ok){c.c++;good()}else{c.w++;bad()}
+if(el)el.classList.add(ok?'ok':'bad');if(!ok){const k=$('[data-k]');k&&k.classList.add('ok')}
+setTimeout(()=>{c.i++;step()},ok?700:1400)}
+function result(){const c=cur,n=c.n,l=lv(n),p=Math.round(100*c.c/(c.c+c.w)),tr=p>=90?[3,'🏆','كأس ذهبي']:p>=70?[2,'🥈','ميدالية فضية']:p>=50?[1,'🥉','ميدالية برونزية']:[0,'💪','حاول مجددًا'];
+const pts=c.c*10+tr[0]*20,o=P[me].lv[n];if(!o||pts>o.pts||tr[0]>o.st){P[me].lv[n]={pts:Math.max(pts,o?o.pts:0),st:Math.max(tr[0],o?o.st:0),p,ti:tr[1],t:tr[2]};sv()}
+if(tr[0]){good();for(let i=0;i<24;i++){const s=document.createElement('span');s.className='cf';s.textContent=['🎉','⭐','✨','🎊'][i%4];s.style.left=Math.random()*95+'%';s.style.animationDelay=Math.random()*1.5+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),5000)}}
+const nx=!tr[0]?'':n==7?`<button class=btn onclick=cert()>🎓 شهادة الإنجاز</button>`:n==6?`<button class=btn onclick=lb()>🏅 لوحة المتصدرين</button>`:`<button class=btn onclick=start(${n+1})>انتقل إلى المغامرة التالية ➜</button>`;
+R(`<div class=card><div class=c><div class=sc>${tr[0]?'🎉':'🌱'}</div><h1>${tr[0]?'أحسنت يا '+esc(me)+'!':'لا بأس، حاول مرة أخرى'}</h1><div style="font-size:42px">${'⭐'.repeat(tr[0])||'☆'}</div><p><b>${tr[1]} ${tr[2]}</b>${tr[0]?`<br>الشارة: ${l.md[1]} ${l.md[0]}`:''}</p><p>${tr[0]?l.msg:'تحتاج ٥٠٪ على الأقل لفتح العالم التالي. أعد المحاولة للحصول على جائزة أفضل!'}</p><p>✅ صحيحة: ${c.c} &nbsp; ❌ خاطئة: ${c.w} &nbsp; 📊 ${p}٪ &nbsp; ⭐ ${pts} نقطة</p>${nx}<button class="btn b" onclick=start(${n})>🔄 إعادة المحاولة</button><button class="btn a" onclick=map()>🗺️ الخريطة</button></div></div>`)}
+function rows(){return Object.entries(P).map(([n,p])=>{const v=Object.values(p.lv);return{n,pts:v.reduce((a,x)=>a+x.pts,0),st:v.reduce((a,x)=>a+x.st,0),md:v.filter(x=>x.st>0).length,lv:Object.keys(p.lv).filter(k=>k<7&&p.lv[k].st>0).length}}).filter(r=>r.md).sort((a,b)=>b.pts-a.pts)}
+function lb(){clearInterval(T);const r=rows(),i=r.findIndex(x=>x.n==me);let h=`<div class=card><h1>🏅 لوحة المتصدرين</h1><p class=c style="font-size:14px">النتائج محفوظة في هذا المتصفح وعلى هذا الجهاز فقط، وكلها نتائج لاعبين حقيقيين.</p>`;
+h+=r.length?r.map((x,k)=>`<div class="rw ${k<3?'t'+(k+1):''} ${x.n==me?'me':''}"><span>${['🥇','🥈','🥉'][k]||k+1}</span><span>${esc(x.n)}</span><span>⭐${x.st} 🎖️${x.md} 🗺️${x.lv}/6 &nbsp;<b>${x.pts}</b></span></div>`).join(''):'<p class=c>لا توجد نتائج بعد. أكمل مستوى واحدًا لتظهر هنا!</p>';
+if(i>=0)h+=`<p class=c><b>مركزك: ${i+1} من ${r.length}</b></p>`;
+h+=`<div class=c>${me&&P[me]&&un(7)?'<button class=btn onclick=start(7)>🏆 الاختبار النهائي</button>':''}<button class="btn a" onclick="me&&P[me]?map():home()">رجوع</button></div></div>`;R(h)}
+function cert(){const o=P[me].lv[7],r=rows(),i=r.findIndex(x=>x.n==me),x=r[i];bg('#ffe38a,#ffb86b');
+R(`<div class=card id=cert><div style="font-size:56px">🏅</div><h2>شهادة إنجاز</h2><p>تشهد مغامرة في عالم التضاريس بأن المستكشف</p><h1>${esc(me)}</h1><p>أكمل المستويات الستة والاختبار النهائي، ونال لقب</p><h2>⭐ بطل عالم التضاريس ⭐</h2><p>نتيجة الاختبار النهائي: ${o.p}٪ — مجموع النقاط: ${x.pts} — النجوم: ${x.st} — الميداليات: ${x.md}<br>الترتيب: ${i+1} من ${r.length}<br>${new Date().toLocaleDateString('ar-EG')}</p></div><div class=c><button class=btn onclick="window.print()">🖨️ طباعة الشهادة</button><button class="btn b" onclick=lb()>🏅 لوحة المتصدرين</button><button class="btn a" onclick=map()>🗺️ الخريطة</button></div>`)}
+home();
+</script></body></html>
